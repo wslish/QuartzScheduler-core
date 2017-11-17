@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuartzScheduler.Infrastructure", "QuartzScheduler.Infrastructure\QuartzScheduler.Infrastructure.csproj", "{94FA7651-D375-4D91-96DC-A4C2FEA6D58A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuartzScheduler.Web", "QuartzScheduler.Web\QuartzScheduler.Web.csproj", "{1D932C59-3DBF-494B-816F-E65899CF1A81}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94FA7651-D375-4D91-96DC-A4C2FEA6D58A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94FA7651-D375-4D91-96DC-A4C2FEA6D58A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94FA7651-D375-4D91-96DC-A4C2FEA6D58A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94FA7651-D375-4D91-96DC-A4C2FEA6D58A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D932C59-3DBF-494B-816F-E65899CF1A81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D932C59-3DBF-494B-816F-E65899CF1A81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D932C59-3DBF-494B-816F-E65899CF1A81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D932C59-3DBF-494B-816F-E65899CF1A81}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {87411CEE-64DC-4FF9-94CB-34D74D4F263F}
+	EndGlobalSection
+EndGlobal
