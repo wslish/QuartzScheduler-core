@@ -1,40 +1,85 @@
-﻿<!DOCTYPE html>
-<html>
+﻿<!doctype html>
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Quartz Monitoring</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    <meta name="renderer" content="webkit">
+    <title>@ViewBag.Title</title>
+    <link type="text/css" rel="stylesheet" href="/resource/css/framework.css" />
+    <link type="text/css" rel="stylesheet" href="/resource/css/main.css" />
+    <link type="text/css" rel="stylesheet" href="/resource/sweetalert/sweetalert.css" />
+    <script type="text/javascript" src="/resource/javascript/jquery.min.js"></script>
+    <script type="text/javascript" src="/resource/javascript/framework.js"></script>
+    <script type="text/javascript" src="/resource/javascript/form.min.js"></script>
+    <script type="text/javascript" src="/resource/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript" src="/resource/javascript/vue.min.js"></script>
+    <script type="text/javascript" src="/resource/javascript/handlebars-v4.0.5.js"></script>
+    <script type="text/javascript" src="/resource/javascript/main.js"></script>
+    <style type="text/css">
+        body {
+            overflow-x: hidden;
+        }
+
+        select {
+            height: 40px;
+        }
+
+        .fields.search > .field {
+            margin-right: 5px;
+        }
+    </style>
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Quartz Monitoring", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+    <div class="page">
+        <header>
+            <div class="bigcontainer">
+                <div id="logo">
+                    Quartz Scheduler
+                </div>
+                <div class="user">
+                    <div class="ui inline labeled icon top right pointing dropdown">
+
+                    </div>
+                </div>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                </ul>
+        </header>
+        <!-- the main menu-->
+        <div class="ui teal inverted menu">
+            <div class="bigcontainer">
+                <div class="right menu">
+                    <a class="item active" href="/task"><i class="tasks icon"></i>任务</a>
+                </div>
             </div>
         </div>
-    </div>
-<div class="container body-content">
-    @RenderBody()
-    <hr/>
-    <footer>
-        <p>&copy; @DateTime.Now.Year - Quartz Scheduler</p>
-    </footer>
-</div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+
+        @RenderBody()
+
+    </div>
+    <footer>
+        <div id="copyrights">
+            <div class="inset">
+                <div class="bigcontainer">
+                    <div class="fl">
+                        <p>
+                            &copy; 2017 Quartz Scheduler
+                            @*<i class="Github Alternate icon"></i><a href="https://github.com/ouqiang/gocron" target="_blank">
+                                    GitHub
+                                </a>*@
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        $(
+            function () {
+                $('.ui.dropdown').dropdown();
+            }
+        );
+    </script>
     @RenderSection("scripts", required: false)
+
 </body>
 </html>
