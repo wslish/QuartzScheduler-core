@@ -23,24 +23,46 @@ namespace QuartzScheduler.Infrastructure
             {
                 StartTime = DateTime.Now
             };
-            int taskId = context.JobDetail.JobDataMap.GetIntValue("TaskId");
-            var task = _db.Task.FirstOrDefault(s => s.Id == taskId);
-            if (task != null)
+            try
             {
-                using (HttpClient client = new HttpClient())
-                {
-                    var message = await client.GetAsync(task.Command);
 
+                int taskId = context.JobDetail.JobDataMap.GetIntValue("TaskId");
+                int timeout = context.JobDetail.JobDataMap.GetIntValue("Timeout");
+
+                var task = _db.Task.FirstOrDefault(s => s.Id == taskId);
+                if (task != null)
+                {
+                    log.TaskId = task.Id;
+                    log.Name = task.Name;
+                    log.Command = task.Command;
                     log.EndTime = DateTime.Now;
-                    log.Status = (int)message.StatusCode;
-                    log.Result = await message.Content.ReadAsStringAsync();
+                    using (HttpClient client = new HttpClient())
+                    {
+                        if (timeout > 0)
+                        {
+                            client.Timeout = TimeSpan.FromSeconds(timeout);
+                        }
+                        var message = await client.GetAsync(task.Command);
+
+                        log.Status = 2;
+                        log.Result = await message.Content.ReadAsStringAsync();
+                    }
                 }
+
+
+            }
+            catch (Exception ex)
+            {
+                log.Result = ex.Message;
+            }
+            finally
+            {
+                _db.TaskLog.Add(log);
+                _db.SaveChanges();
             }
 
-            _db.TaskLog.Add(log);
-            _db.SaveChanges();
         }
 
-       
+
     }
 }

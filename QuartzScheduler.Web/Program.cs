@@ -35,7 +35,8 @@ namespace QuartzScheduler.Web
                 }
                 else
                 {
-                    DisplayHelp();
+                    //DisplayHelp();
+                    BuildWebHost(args).Run();
                 }
             }
             catch (Exception ex)

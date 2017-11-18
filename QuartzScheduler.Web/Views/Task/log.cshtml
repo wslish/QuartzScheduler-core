@@ -1,0 +1,157 @@
+@model List<QuartzScheduler.Model.TaskLog>
+@{
+    var pager = (QuartzScheduler.Model.PaginationInfo)ViewBag.pager;
+}
+<style type="text/css">
+    pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        padding: 10px;
+        background-color: #4C4C4C;
+        color: white;
+    }
+</style>
+<div class="ui grid">
+    <!--the vertical menu-->
+    @Html.Partial("menu")
+
+    <div class="twelve wide column">
+        <div class="pageHeader">
+            <div class="segment">
+                <h3 class="ui dividing header">
+                    <div class="content">
+                        @*<button class="ui small teal button" onclick="clearLog()">清空日志</button>*@
+                    </div>
+                </h3>
+            </div>
+        </div>
+        <form class="ui form">
+            <div class="six fields search">
+                <div class="field">
+                    <input type="text" placeholder="任务ID" name="task_id" value="@(Context.Request.Query.Where(s=>s.Key=="task_id").Select(s=>s.Value).FirstOrDefault())">
+                </div>
+
+                <div class="field">
+                    <select name="status">
+                        <option value="-1">状态</option>
+                        <option value="0">失败</option>
+                        <option value="1">执行中</option>
+                        <option value="2">成功</option>
+                        <option value="3">取消</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <button class="ui linkedin submit button">搜索</button>
+                </div>
+            </div>
+        </form>
+        <table class="ui celled table">
+            <thead>
+                <tr>
+                    <th>任务ID</th>
+                    <th>任务名称</th>
+                    <th>执行方式</th>
+                    <th>执行时长</th>
+                    <th>状态</th>
+                    <th>执行结果</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><a href="/task?id=@item.TaskId">@item.TaskId</a></td>
+                        <td>@item.Name</td>
+                        <td>HTTP</td>
+                        <td>
+
+                            开始时间: @item.StartTime<br>
+
+                            结束时间: @item.EndTime
+
+                        </td>
+                        <td>
+                            @switch (item.Status)
+                            {
+                                case 1:
+                                    @:执行中
+                                    break;
+                                case 2:
+                                    @:成功
+                                    break;
+                                case 3:
+                                    @:取消
+                                    break;
+                                default:
+                                    @:失败
+                                    break;
+                            }
+
+                        </td>
+                        <td>
+                            @if (item.Status == 2 || item.Status == 0)
+                            {
+                                <button class="ui small primary button"
+                                        onclick="showResult('@item.Name', '@item.Command', '@item.Result')">
+                                    查看结果
+                                </button>
+                            }
+
+                        </td>
+                    </tr>
+                }
+
+
+            </tbody>
+        </table>
+        @Html.Partial("_Pagination", pager)
+    </div>
+</div>
+
+<div class="message">
+    <result></result>
+</div>
+
+<script type="text/x-vue-template" id="task-result">
+    <div class="ui modal">
+        <i class="close icon"></i>
+        <div class="header">
+            {{name}}
+        </div>
+        <div>
+            <pre style="background-color:#04477C;color:lightslategray">{{command}}</pre>
+        </div>
+        <div>
+            <pre>{{result}}</pre>
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+    function showResult(name, command, result) {
+        $('.message').html($('#task-result').html());
+        new Vue(
+            {
+                el: '.message',
+                data: {
+                    result: result.replace(/\\n/, "<br>"),
+                    name: name,
+                    command: command
+                }
+            }
+        );
+        $('.ui.modal.transition').remove();
+        $('.ui.modal').modal({
+            detachable: false,
+            observeChanges: true
+        }).modal('refresh').modal('show');
+    }
+
+    function clearLog() {
+        util.confirm("确定要删除所有日志吗？", function () {
+            util.post("/task/log/clear", {}, function () {
+                location.reload();
+            });
+        });
+    }
+</script>

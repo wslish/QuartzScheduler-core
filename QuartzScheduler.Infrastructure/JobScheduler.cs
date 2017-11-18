@@ -14,15 +14,20 @@ namespace QuartzScheduler.Infrastructure
 {
     public class JobScheduler
     {
-        private IScheduler _scheduler;
+        private static IScheduler _scheduler;
         TaskDbContext _db = null;
 
-        public JobScheduler(TaskDbContext db)
+        public JobScheduler(TaskDbContext db, IScheduler scheduler)
         {
             _db = db;
-            InitializeScheduler();
+            _scheduler = scheduler;
         }
 
+        static JobScheduler()
+        {
+            var schedulerFactory = new StdSchedulerFactory();
+            _scheduler = schedulerFactory.GetScheduler().Result;
+        }
         public void Start()
         {
             if (!_scheduler.IsStarted)
@@ -57,54 +62,7 @@ namespace QuartzScheduler.Infrastructure
             _scheduler.ResumeAll();
         }
 
-        public async System.Threading.Tasks.Task<List<Job>> GetAllJobs()
-        {
-            var jobs = new List<Job>();
-            var jobGroups = await _scheduler.GetJobGroupNames();
-            foreach (string group in jobGroups)
-            {
-                var groupMatcher = GroupMatcher<JobKey>.GroupEquals(group);
-                var jobKeys = await _scheduler.GetJobKeys(groupMatcher);
-                foreach (var jobKey in jobKeys)
-                {
-                    var job = new Job
-                    {
-                        Name = jobKey.Name,
-                        GroupName = group,
-                        Triggers = new List<Trigger>()
-                    };
-                    var triggers = await _scheduler.GetTriggersOfJob(jobKey);
-                    foreach (var trigger in triggers)
-                    {
-                        var cronTrigger = trigger as ICronTrigger;
-                        var nextFireTime = trigger.GetNextFireTimeUtc();
-                        var previousFireTime = trigger.GetPreviousFireTimeUtc();
-                        job.Triggers.Add(new Trigger
-                        {
-                            Name = trigger.Key.Name,
-                            GroupName = trigger.Key.Group,
-                            Type = trigger.GetType().Name,
-                            State = _scheduler.GetTriggerState(trigger.Key).ToString(),
-                            NextFireTime = nextFireTime.HasValue
-                                ? nextFireTime.Value.DateTime.ToLocalTime()
-                                : DateTime.MinValue,
-                            PreviousFireTime = previousFireTime.HasValue
-                                ? previousFireTime.Value.DateTime.ToLocalTime()
-                                : DateTime.MinValue,
-                            CronExpression = cronTrigger?.CronExpressionString,
-                            DataMap = trigger.JobDataMap
-                        });
-                    }
-                    jobs.Add(job);
-                }
-            }
-            return jobs;
-        }
 
-        public IScheduler GetScheduler()
-        {
-            return _scheduler;
-        }
 
         /// <summary>
         ///  Remove the indicated trigger from the scheduler. If job is not durable, 
@@ -152,16 +110,6 @@ namespace QuartzScheduler.Infrastructure
             return _scheduler.CheckExists(new JobKey(jobName, groupName));
         }
 
-        public void ResumeTrigger(string triggerName, string groupName)
-        {
-            _scheduler.ResumeTrigger(new TriggerKey(triggerName, groupName));
-        }
-
-        public void PauseTrigger(string triggerName, string groupName)
-        {
-            _scheduler.PauseTrigger(new TriggerKey(triggerName, groupName));
-        }
-
         public async Task AddJob(Model.Task model)
         {
             if (await IsJobExist(model.Name, model.JobGroup))
@@ -175,8 +123,9 @@ namespace QuartzScheduler.Infrastructure
                 .OfType(typeof(HttpRequestJob))
                 .WithIdentity(model.Name, model.JobGroup)
                 .StoreDurably(model.IsDeleted == 1)
-                .RequestRecovery(true)
+                .RequestRecovery(model.IsDeleted == 1)
                 .UsingJobData("TaskId", model.Id)
+                .UsingJobData("Timeout", model.Timeout)
                 .Build();
 
             //build trigger by cron expression
@@ -190,6 +139,7 @@ namespace QuartzScheduler.Infrastructure
             await _scheduler.ScheduleJob(jobDetail, trigger);
         }
 
+        #region 暂时没用
         public async Task ScheduleJob(string jobName, string groupName, string cronExpression)
         {
             if (!await IsJobExist(jobName, groupName))
@@ -258,16 +208,23 @@ namespace QuartzScheduler.Infrastructure
                     }).ToList();
         }
 
-        #region Private Methods
+        #endregion
 
-        private async Task InitializeScheduler()
+        public async Task Init()
         {
-            var schedulerFactory = new StdSchedulerFactory();
-            _scheduler = await schedulerFactory.GetScheduler();
+            var taskSet = _db.Task.Where(s => s.IsDeleted == 0 && s.Status == 1).ToList();
+
+            foreach (var item in taskSet)
+            {
+                await AddJob(item);
+
+            }
+            Start();
+            //foreach (var item in taskSet.Where(s => s.Status != 1))
+            //{
+            //    this.PauseJob(item.Name, item.JobGroup);
+            //}
         }
 
-
-
-        #endregion
     }
 }

@@ -7,6 +7,9 @@
   <ItemGroup>
     <PackageReference Include="DasMulli.Win32.ServiceUtils" Version="1.1.0-rc-101" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.0.0.1" />
+    <PackageReference Include="Webdiyer.MvcPager" Version="3.0.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -14,14 +17,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Views\Home\Index.cshtml" />
     <None Include="Views\Shared\Error.cshtml" />
     <None Include="Views\Shared\_Layout.cshtml" />
     <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <None Include="Views\Task\Index.cshtml" />
+    <None Include="Views\Task\log.cshtml" />
+    <None Include="Views\Task\menu.cshtml" />
+    <None Include="Views\Task\task_form.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\QuartzScheduler.Infrastructure\QuartzScheduler.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
+    <Folder Include="Views\Shared\" />
+    <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\js\" />
   </ItemGroup>
 
 </Project>

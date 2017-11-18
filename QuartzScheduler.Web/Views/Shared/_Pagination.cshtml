@@ -1,0 +1,61 @@
+﻿@model QuartzScheduler.Model.PaginationInfo
+@{
+    var qr = Context.Request.Query;
+
+    string query = $"?task_id={qr.Where(s => s.Key == "task_id").Select(s => s.Value).FirstOrDefault()}&status={qr.Where(s => s.Key == "status").Select(s => s.Value).FirstOrDefault()}";
+
+    string url = ($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}{query}");
+}
+@if (Model.TotalPages > 1)
+{
+    <div class="ui pagination menu">
+        @if (Model.ActualPage != 1)
+        {
+            <a class="item" href="@url&page=1">
+                首页
+            </a>
+        }
+        @if (Model.ActualPage > 1)
+        {
+            <a class="icon item" href="@url&page=@(Model.ActualPage-1)">
+                <i class="icon left arrow"></i>
+            </a>
+        }
+       
+        @*@for (int i = 0; i < Model.TotalPages; i++)
+        {
+            if (i == 0)
+            {
+                <div class="disabled item">
+                    ...
+                </div>
+            }
+            else
+            {
+                <a class="icon @(Model.ActualPage == i  ? "active" : "" ) item" href="@url&page=@i">
+                    @i
+                </a>
+            }
+        }*@
+        <a class="icon active item" href="@url&page=@Model.ActualPage">
+            @Model.ActualPage
+        </a>
+        @if (Model.ActualPage < Model.TotalPages)
+        {
+            <a class="icon item" href="@url&page=@(Model.ActualPage+1)">
+                <i class="icon right arrow"></i>
+            </a>
+        }
+        @if (Model.ActualPage != Model.TotalPages)
+        {
+            <a class="icon item" href="@url&page=@Model.TotalPages">
+                尾页
+            </a>
+        }
+
+
+        <div class="item">@(Model.TotalItems)条/@(Model.TotalPages)页</div>
+    </div>
+
+}
+
