@@ -12,161 +12,163 @@
                 </h3>
             </div>
         </div>
-    <form class="ui form fluid vertical segment">
-        <input type="hidden" name="id"  asp-for="@Model.Id">
-        <div class="two fields">
-            <div class="field">
-                <label>
-                    <div class="content">任务名称</div>
-                </label>
-                <div class="ui small input">
-                    <input type="text" name="name" placeholder="任务名称" asp-for="@Model.Name">
-                </div>
-            </div>
+        <form class="ui form fluid vertical segment">
+            <input type="hidden" name="id" asp-for="@Model.Id">
+            <input type="hidden" name="status" asp-for="@Model.Status">
 
-            <div class="field">
-                <label>
-                    <div class="content">JobGroup</div>
-                </label>
-                <div class="ui small input">
-                    <input type="text" name="jobGroup" placeholder="Group用于任务分类" asp-for="@Model.JobGroup">
-                </div>
-            </div>
-        </div>
-        <div class="two fields">
-            <div class="field">
-                <label>
-                    <div class="content">任务类型</div>
-                    @*<div class="ui message">
-                        主任务可以配置多个子任务, 当主任务执行完成后，自动执行子任务<br>
-                        任务类型新增后不能变更
-                    </div>*@
-                </label>
-                <select name="level" id="level" @(Model.Id>0?"disabled=\"disabled\"":"") asp-for="@Model.Level">
-                    <option value="1">主任务</option>
-                    <option value="2">子任务</option>
-                </select>
-            </div>
-        </div>
-        <div id="parent-task">
-            @*<div class="two fields">
-                <div class="field">
-                    <label>
-                        <div class="content">依赖关系</div>
-                        <div class="ui message">
-                            强依赖: 主任务执行成功，才会运行子任务 <br>
-                            弱依赖: 无论主任务执行是否成功，都会运行子任务
-                        </div>
-                    </label>
-                    <select name="dependency_status" id="dependency_status" asp-for="@Model.DependencyStatus">
-                        <option value="1">强依赖</option>
-                        <option value="2">弱依赖</option>
-                    </select>
-                </div>
-                <div class="field">
-                    <label>
-                        <div class="content">子任务ID</div>
-                        <div class="ui message">
-                            多个任务ID逗号分隔 <br>
-                            子任务并发执行
-                        </div>
-                    </label>
-                    <div class="ui small input">
-                        <input type="text" name="dependency_task_id" placeholder="可选" value="@Model.DependencyTaskId">
-                    </div>
-                </div>
-            </div>*@
             <div class="two fields">
                 <div class="field">
                     <label>
-                        <div class="content">
-                            crontab表达式
-                        </div>
+                        <div class="content">任务名称</div>
                     </label>
                     <div class="ui small input">
-                        <input type="text" name="cron" value="@Model.Cron" placeholder="秒 分 时 天 月 周"/>
+                        <input type="text" name="name" placeholder="任务名称" asp-for="@Model.Name">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>
+                        <div class="content">JobGroup</div>
+                    </label>
+                    <div class="ui small input">
+                        <input type="text" name="jobGroup" placeholder="Group用于任务分类" asp-for="@Model.JobGroup">
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="three fields">
-            <div class="field">
-                <label>执行方式</label>
-                <select name="protocol" id="protocol">
-                    <option value="1" selected>HTTP</option>
-                </select>
+            <div class="two fields">
+                <div class="field">
+                    <label>
+                        <div class="content">任务类型</div>
+                        @*<div class="ui message">
+                                主任务可以配置多个子任务, 当主任务执行完成后，自动执行子任务<br>
+                                任务类型新增后不能变更
+                            </div>*@
+                    </label>
+                    <select name="level" id="level" @(Model.Id > 0 ? "disabled=\"disabled\"" : "") asp-for="@Model.Level">
+                        <option value="1">主任务</option>
+                        <option value="2">子任务</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        
-        <div class="two fields">
-            <div class="field">
-                <label>命令</label>
-                <textarea rows="5" name="command" placeholder="请输入系统命令" id="command">@Model.Command</textarea>
+            <div id="parent-task">
+                @*<div class="two fields">
+                        <div class="field">
+                            <label>
+                                <div class="content">依赖关系</div>
+                                <div class="ui message">
+                                    强依赖: 主任务执行成功，才会运行子任务 <br>
+                                    弱依赖: 无论主任务执行是否成功，都会运行子任务
+                                </div>
+                            </label>
+                            <select name="dependency_status" id="dependency_status" asp-for="@Model.DependencyStatus">
+                                <option value="1">强依赖</option>
+                                <option value="2">弱依赖</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>
+                                <div class="content">子任务ID</div>
+                                <div class="ui message">
+                                    多个任务ID逗号分隔 <br>
+                                    子任务并发执行
+                                </div>
+                            </label>
+                            <div class="ui small input">
+                                <input type="text" name="dependency_task_id" placeholder="可选" value="@Model.DependencyTaskId">
+                            </div>
+                        </div>
+                    </div>*@
+                <div class="two fields">
+                    <div class="field">
+                        <label>
+                            <div class="content">
+                                crontab表达式
+                            </div>
+                        </label>
+                        <div class="ui small input">
+                            <input type="text" name="cron" value="@Model.Cron" placeholder="秒 分 时 天 月 周" />
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="three fields">
-            <div class="field">
-                <label>任务超时时间(秒, 0-86400)</label>
-                <input type="text"  name="timeout" placeholder="默认0, 不限制" asp-for="@Model.Timeout">
+            <div class="three fields">
+                <div class="field">
+                    <label>执行方式</label>
+                    <select name="protocol" id="protocol">
+                        <option value="1" selected>HTTP</option>
+                    </select>
+                </div>
             </div>
-          
-            @*<div class="field">
-                <label>允许多实例同时运行</label>
-                <select name="multi">
-                    <option value="2" selected>否</option>
-                    <option value="1">是</option>
-                </select>
-            </div>*@
 
-        </div>
-        @*<div class="three fields">
-            <div class="field">
-                <label>任务通知</label>
-                <select name="notify_status" id="task-status" asp-for="@Model.NotifyStatus">
-                    <option value="1" selected>不通知</option>
-                    <option value="2">失败通知</option>
-                    <option value="3">执行结束通知</option>
-                </select>
+            <div class="two fields">
+                <div class="field">
+                    <label>命令</label>
+                    <textarea rows="5" name="command" placeholder="请输入系统命令" id="command">@Model.Command</textarea>
+                </div>
             </div>
-        </div>
-        <div class="two fields" style="display: none" id="task-notify-type">
-            <div class="field" >
-                <label>通知类型</label>
-                <select name="notify_type">
-                    <option value="1" selected>请选择</option>
-                    <option value="2">邮件</option>
-                </select>
+            <div class="three fields">
+                <div class="field">
+                    <label>任务超时时间(秒, 0-86400)</label>
+                    <input type="text" name="timeout" placeholder="默认0, 不限制" asp-for="@Model.Timeout">
+                </div>
+
+                @*<div class="field">
+                        <label>允许多实例同时运行</label>
+                        <select name="multi">
+                            <option value="2" selected>否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>*@
+
             </div>
-        </div>*@
-        <div class="inline fields" style="display: none" id="receiver-id"></div>
-        <div class="two fields">
-            <div class="field">
-                <label>备注</label>
-                <textarea rows="5" name="remark" placeholder="任务备注信息">@Model.Remark</textarea>
+            @*<div class="three fields">
+                    <div class="field">
+                        <label>任务通知</label>
+                        <select name="notify_status" id="task-status" asp-for="@Model.NotifyStatus">
+                            <option value="1" selected>不通知</option>
+                            <option value="2">失败通知</option>
+                            <option value="3">执行结束通知</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="two fields" style="display: none" id="task-notify-type">
+                    <div class="field" >
+                        <label>通知类型</label>
+                        <select name="notify_type">
+                            <option value="1" selected>请选择</option>
+                            <option value="2">邮件</option>
+                        </select>
+                    </div>
+                </div>*@
+            <div class="inline fields" style="display: none" id="receiver-id"></div>
+            <div class="two fields">
+                <div class="field">
+                    <label>备注</label>
+                    <textarea rows="5" name="remark" placeholder="任务备注信息">@Model.Remark</textarea>
+                </div>
             </div>
-        </div>
-        <div class="ui primary submit button">保存</div>   <a class="ui button" onclick="location.href='/task';">取消</a>
-    </form>
+            <div class="ui primary submit button">保存</div>   <a class="ui button" onclick="location.href='/task';">取消</a>
+        </form>
     </div>
 </div>
 
 
 <script type="text/javascript">
-    $(function() {
+    $(function () {
         changeCommandPlaceholder();
         changeLevel();
     });
 
-    $('#protocol').change(function() {
+    $('#protocol').change(function () {
         changeCommandPlaceholder();
         changeProtocol();
     });
 
-    $('#level').change(function() {
+    $('#level').change(function () {
         changeLevel();
     });
 
-    $('#task-status').change(function() {
+    $('#task-status').change(function () {
         var selected = $(this).val();
         if (selected == 1) {
             $('#task-notify-type').hide();
@@ -192,10 +194,10 @@
 
 
     $('.ui.checkbox')
-            .checkbox()
-    ;
+        .checkbox()
+        ;
 
-  
+
 
 
     function changeLevel() {
@@ -214,61 +216,61 @@
     var $uiForm = $('.ui.form');
     registerSelectFormValidation("selectProtocol", $uiForm, $('#protocol'), 'protocol');
     $($uiForm).form(
-            {
-                onSuccess: function(event, fields) {
-                  
-                    util.post('/task/save', fields, function(code, message) {
-                        location.href = "/task"
-                    });
+        {
+            onSuccess: function (event, fields) {
 
-                    return false;
+                util.post('/task/save', fields, function (code, message) {
+                    location.href = "/task"
+                });
+
+                return false;
+            },
+            fields: {
+                name: {
+                    identifier: 'name',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: '请输入任务名称'
+                        },
+                        {
+                            type: 'maxLength[32]',
+                            prompt: '长度不能超过32'
+                        }
+                    ]
                 },
-                fields: {
-                    name: {
-                        identifier  : 'name',
-                        rules: [
-                            {
-                                type   : 'empty',
-                                prompt : '请输入任务名称'
-                            },
-                            {
-                                type : 'maxLength[32]',
-                                prompt : '长度不能超过32'
-                            }
-                        ]
-                    },
-                    command: {
-                        identifier  : 'command',
-                        rules: [
-                            {
-                                type   : 'empty',
-                                prompt : '请输入任务命令'
-                            },
-                            {
-                                type : 'maxLength[256]',
-                                prompt : '长度不能超过256'
-                            }
-                        ]
-                    },
-                    timeout: {
-                        identifier  : 'timeout',
-                        rules: [
-                            {
-                                type   : 'integer[0..86400]',
-                                prompt : '超时范围0-86400'
-                            }
-                        ]
-                    },
-                    remark: {
-                        identifier  : 'remark',
-                        rules: [
-                            {
-                                type   : 'maxLength[100]',
-                                prompt : '长度不能超过100'
-                            }
-                        ]
-                    }
+                command: {
+                    identifier: 'command',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: '请输入任务命令'
+                        },
+                        {
+                            type: 'maxLength[256]',
+                            prompt: '长度不能超过256'
+                        }
+                    ]
                 },
-                inline : true
-            });
+                timeout: {
+                    identifier: 'timeout',
+                    rules: [
+                        {
+                            type: 'integer[0..86400]',
+                            prompt: '超时范围0-86400'
+                        }
+                    ]
+                },
+                remark: {
+                    identifier: 'remark',
+                    rules: [
+                        {
+                            type: 'maxLength[100]',
+                            prompt: '长度不能超过100'
+                        }
+                    ]
+                }
+            },
+            inline: true
+        });
 </script>

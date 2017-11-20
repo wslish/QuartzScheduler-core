@@ -10,6 +10,7 @@ using QuartzScheduler.Infrastructure.Utils;
 using QuartzScheduler.Infrastructure.Models;
 using QuartzScheduler.Infrastructure;
 using QuartzScheduler.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace QuartzScheduler.Web.Controllers
 {
@@ -24,7 +25,7 @@ namespace QuartzScheduler.Web.Controllers
             _db = db;
         }
 
-        public ActionResult Index(int? id, string name, string group, int? status, int page = 1, int pageSize = 10)
+        public async Task<ActionResult> Index(int? id, string name, string group, int? status, int page = 1, int pageSize = 10)
         {
             var query = _db.Task.Where(s => s.IsDeleted == 0);
             if (id.HasValue)
@@ -43,11 +44,11 @@ namespace QuartzScheduler.Web.Controllers
             {
                 query = query.Where(s => s.JobGroup.Contains(group));
             }
-            var total = query.Count();
-            var result = query.OrderByDescending(s => s.Id)
+            var total = await query.CountAsync();
+            var result = await query.OrderByDescending(s => s.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToList();
+                .ToListAsync();
 
             var PaginationInfo = new PaginationInfo()
             {
@@ -60,7 +61,7 @@ namespace QuartzScheduler.Web.Controllers
             return View(result);
         }
 
-        public ActionResult Log(int? task_id, int? status, int page = 1, int pageSize = 10)
+        public async Task<ActionResult> Log(int? task_id, int? status, int page = 1, int pageSize = 10)
         {
             var query = _db.TaskLog.Where(s => true);
             if (task_id.HasValue)
@@ -72,11 +73,11 @@ namespace QuartzScheduler.Web.Controllers
                 query = query.Where(s => s.Status == status);
             }
 
-            var total = query.Count();
-            var result = query.OrderByDescending(s => s.Id)
+            var total = await query.CountAsync();
+            var result = await query.OrderByDescending(s => s.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToList();
+                .ToListAsync();
 
             var PaginationInfo = new PaginationInfo()
             {
@@ -89,9 +90,9 @@ namespace QuartzScheduler.Web.Controllers
             return View(result);
         }
 
-        public ActionResult Run(int id)
+        public async Task<ActionResult> Run(int id)
         {
-            var task = _db.Task.FirstOrDefault(s => s.Id == id);
+            var task = await _db.Task.FirstOrDefaultAsync(s => s.Id == id);
             if (task != null)
             {
                 scheduler.TriggerJob(task.Name, task.JobGroup);
@@ -99,9 +100,9 @@ namespace QuartzScheduler.Web.Controllers
             return Json(new ApiResultModel<bool>());
         }
         [HttpPost]
-        public ActionResult Pause(int id)
+        public async Task<ActionResult> Pause(int id)
         {
-            var task = _db.Task.FirstOrDefault(s => s.Id == id);
+            var task = await _db.Task.FirstOrDefaultAsync(s => s.Id == id);
             if (task != null)
             {
                 task.Status = 0;
@@ -114,11 +115,11 @@ namespace QuartzScheduler.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> Resume(int id)
         {
-            var task = _db.Task.FirstOrDefault(s => s.Id == id);
+            var task = await _db.Task.FirstOrDefaultAsync(s => s.Id == id);
             if (task != null)
             {
                 task.Status = 1;
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 if (await scheduler.IsJobExist(task.Name, task.JobGroup))
                 {
                     scheduler.ResumeJob(task.Name, task.JobGroup);
@@ -132,15 +133,15 @@ namespace QuartzScheduler.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Remove(int id)
+        public async Task<ActionResult> Remove(int id)
         {
             var task = _db.Task.FirstOrDefault(s => s.Id == id);
             if (task != null)
             {
                 task.Status = 0;
                 task.IsDeleted = 1;
-                _db.SaveChanges();
-                scheduler.DeleteJob(task.Name, task.JobGroup);
+                await _db.SaveChangesAsync();
+                await scheduler.DeleteJob(task.Name, task.JobGroup);
             }
             return Json(new ApiResultModel<bool>());
         }
@@ -163,9 +164,9 @@ namespace QuartzScheduler.Web.Controllers
         {
             return View("task_form", new Model.Task());
         }
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            var task = _db.Task.FirstOrDefault(s => s.Id == id && s.IsDeleted == 0);
+            var task = await _db.Task.FirstOrDefaultAsync(s => s.Id == id && s.IsDeleted == 0);
             return View("task_form", task ?? new Model.Task());
         }
         [HttpPost]
@@ -174,11 +175,22 @@ namespace QuartzScheduler.Web.Controllers
             var result = new ApiResultModel<bool>();
             try
             {
-                if (await scheduler.IsJobExist(model.Name, model.JobGroup) || _db.Task.Any(s => s.Name == model.Name && s.Id != model.Id))
-                    throw new ArgumentException(string.Format("Job name {0} Group Name {1} already exists", model.Name, model.JobGroup));
-                model.CreateTime = DateTime.Now;
-                _db.Task.Add(model);
-                _db.SaveChanges();
+                if (await _db.Task.AnyAsync(s => s.Name == model.Name && s.Id != model.Id))
+                    throw new ArgumentException(string.Format("Job name {0} already exists", model.Name));
+                if (model.Id > 0)
+                {
+                    //var task = await _db.Task.FirstOrDefaultAsync(s => s.Id == model.Id && model.IsDeleted == 0);
+                    //task.Name = model.Name;
+                    //task.JobGroup = model.JobGroup;
+                    //task.NotifyReceiver = model.NotifyReceiver;
+                    _db.Task.Update(model);
+                }
+                else
+                {
+                    model.CreateTime = DateTime.Now;
+                    await _db.Task.AddAsync(model);
+                }               
+                await _db.SaveChangesAsync();
                 if (model.Status == 1)
                 {
                     await scheduler.UpdateJob(model);

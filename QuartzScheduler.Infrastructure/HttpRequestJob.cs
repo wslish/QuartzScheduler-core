@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace QuartzScheduler.Infrastructure
 {
@@ -29,7 +30,7 @@ namespace QuartzScheduler.Infrastructure
                 int taskId = context.JobDetail.JobDataMap.GetIntValue("TaskId");
                 int timeout = context.JobDetail.JobDataMap.GetIntValue("Timeout");
 
-                var task = _db.Task.FirstOrDefault(s => s.Id == taskId);
+                var task = await _db.Task.FirstOrDefaultAsync(s => s.Id == taskId);
                 if (task != null)
                 {
                     log.TaskId = task.Id;
@@ -57,8 +58,8 @@ namespace QuartzScheduler.Infrastructure
             }
             finally
             {
-                _db.TaskLog.Add(log);
-                _db.SaveChanges();
+                await _db.TaskLog.AddAsync(log);
+                await _db.SaveChangesAsync();
             }
 
         }

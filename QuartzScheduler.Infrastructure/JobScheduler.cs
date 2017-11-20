@@ -23,11 +23,6 @@ namespace QuartzScheduler.Infrastructure
             _scheduler = scheduler;
         }
 
-        static JobScheduler()
-        {
-            var schedulerFactory = new StdSchedulerFactory();
-            _scheduler = schedulerFactory.GetScheduler().Result;
-        }
         public void Start()
         {
             if (!_scheduler.IsStarted)

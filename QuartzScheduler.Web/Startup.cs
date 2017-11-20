@@ -30,14 +30,12 @@ namespace QuartzScheduler.Web
         {
             string connectionStr = Configuration.GetConnectionString("MySqlConnection");
 
-            services.AddDbContext<TaskDbContext>(options =>
+            services.AddDbContextPool<TaskDbContext>(options =>
               options.UseMySql(connectionStr));
 
-            services.AddScoped<JobScheduler>();
-            services.AddScoped<HttpRequestJob>();
-
-            services.AddMvc();
-
+            services.AddSingleton<JobScheduler>();
+            services.AddTransient<HttpRequestJob>();
+            services.AddTransient<TaskDbContext>();
 
             var schedulerFactory = new StdSchedulerFactory();
 
@@ -45,6 +43,8 @@ namespace QuartzScheduler.Web
             services.AddSingleton<IJobFactory, SimpleInjectorJobFactory>();
             services.AddSingleton<ISchedulerFactory>(schedulerFactory);
             services.AddSingleton(scheduler);
+
+            services.AddMvc();
 
             var builder = services.BuildServiceProvider();
             scheduler.JobFactory = builder.GetService<IJobFactory>();
