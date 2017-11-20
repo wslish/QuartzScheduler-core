@@ -47,6 +47,7 @@ namespace QuartzScheduler.Web
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseConfiguration(new ConfigurationBuilder().AddCommandLine(args).Build())
                 .UseStartup<Startup>()
                 .Build();
     }
