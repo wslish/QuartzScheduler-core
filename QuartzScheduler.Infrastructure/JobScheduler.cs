@@ -104,7 +104,14 @@ namespace QuartzScheduler.Infrastructure
         {
             _scheduler.TriggerJob(new JobKey(jobName, groupName));
         }
-
+        public async Task UpdateJob(Model.Task task)
+        {
+            if (await IsJobExist(task.Name, task.JobGroup))
+            {
+                await DeleteJob(task.Name, task.JobGroup);
+            }
+            await AddJob(task);
+        }
         public Task<bool> IsJobExist(string jobName, string groupName)
         {
             return _scheduler.CheckExists(new JobKey(jobName, groupName));

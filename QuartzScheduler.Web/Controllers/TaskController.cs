@@ -31,7 +31,7 @@ namespace QuartzScheduler.Web.Controllers
             {
                 query = query.Where(s => s.Id == id);
             }
-            if (status > 0)
+            if (status != -1)
             {
                 query = query.Where(s => s.Status == status);
             }
@@ -179,7 +179,10 @@ namespace QuartzScheduler.Web.Controllers
                 model.CreateTime = DateTime.Now;
                 _db.Task.Add(model);
                 _db.SaveChanges();
-                await scheduler.AddJob(model);
+                if (model.Status == 1)
+                {
+                    await scheduler.UpdateJob(model);
+                }
             }
             catch (Exception ex)
             {
