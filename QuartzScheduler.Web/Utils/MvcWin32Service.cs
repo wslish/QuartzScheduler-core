@@ -10,7 +10,7 @@ namespace QuartzScheduler.Web.Utils
 {
     public class MvcWin32Service : IWin32Service
     {
-        public string ServiceName => "MVC Sample Service";
+        public string ServiceName => WinServiceUtils.ServiceName;
 
         private readonly string[] commandLineArguments;
         private IWebHost webHost;

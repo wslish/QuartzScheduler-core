@@ -21,8 +21,8 @@ namespace QuartzScheduler.Web.Utils
         public const string InteractiveFlag = "--interactive";
         
         public const string ServiceName = "QuartzScheduler";
-        public const string ServiceDisplayName = "Demo .NET Core MVC Service";
-        public const string ServiceDescription = "Demo ASP.NET Core MVC Service running on .NET Core";
+        public const string ServiceDisplayName = "QuartzScheduler";
+        public const string ServiceDescription = "QuartzScheduler ASP.NET Core MVC Service running on .NET Core";
 
 
         public static void RunAsService(string[] args)

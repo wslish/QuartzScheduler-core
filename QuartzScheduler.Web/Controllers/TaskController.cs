@@ -31,7 +31,7 @@ namespace QuartzScheduler.Web.Controllers
             {
                 query = query.Where(s => s.Id == id);
             }
-            if (status != -1)
+            if (status.HasValue && status > -1)
             {
                 query = query.Where(s => s.Status == status);
             }
