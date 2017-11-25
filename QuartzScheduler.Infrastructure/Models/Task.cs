@@ -5,6 +5,7 @@ using System.Text;
 
 namespace QuartzScheduler.Model
 {
+    [Table("task")]
     public class Task
     {
 
