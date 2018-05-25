@@ -1,4 +1,7 @@
 # QuartzScheduler-core
+
+emulate https://github.com/ouqiang/gocron 
+
 source code：
 dotnet run --register-service --urls http://*:5080   
 
